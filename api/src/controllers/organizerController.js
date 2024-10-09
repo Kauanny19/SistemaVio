@@ -1,10 +1,10 @@
-let organizers = [];
-let nextId = 1;
+const connect = require('../db/connect')
+//let nextId = 1;
 
 module.exports = class organizerController {
   static async createOrganizer(req, res) {
     
-    const { telefone, email, password, name } = req.body;
+    const {telefone, email, password, name } = req.body;
 
     if (!telefone || !email || !password || !name) {
       return res.status(400).json({ error: "Todos os campos devem ser preenchidos" });
@@ -12,23 +12,38 @@ module.exports = class organizerController {
       return res.status(400).json({error: "Telefone inválido. Deve conter exatamente 11 dígitos numéricos",});
     } else if (!email.includes("@")) {
       return res.status(400).json({ error: "Email inválido. Deve conter @" });
+    }else{
+      // Construção da query INSERT
+      const query = `INSERT INTO usuario (cpf, password, email, name) VALUES('${telefone}', 
+      '${password}', 
+      '${email}', 
+      '${name}')`;
+      //Executando query criada
+      try{
+        connect.query(query, function(err){
+          if(err){
+            console.log(err);
+            console.log(err.code);
+            if(err.code === "ER_DUP_ENTRY"){
+              return res.status(400).json({error: "O Email já está vinculado a outro usuário",});
+            }else{
+              return res.status(500).json({
+                error: "Erro interno do servidor"
+              });
+            }
+          }else{
+            return res.status(201).json({ message: "Organizador criado com sucesso"});
+          }
+        });
+      } catch(error){
+        console.error(error);
+        res.status(500).json({error: "Error interno do servidor"});
+      }
     }
-
-    // Verifica se já existe um organizador com o mesmo email
-    const existingOrganizer = organizers.find((organizer) => organizer.email === email);
-    if (existingOrganizer) {
-      return res.status(400).json({ error: "Email já cadastrado" });
-    }
-
-    // Cria e adiciona novo organizador
-    const newOrganizer = { id: nextId++, telefone, email, password, name };
-    organizers.push(newOrganizer);
-
-    return res.status(201).json({ message: "Organizador criado com sucesso", organizer: newOrganizer });
   }
 
   static async getAllOrganizer(req, res) {
-    return res.status(200).json({ message: "Obtendo todos os organizadores", organizers });
+    return res.status(200).json({ message: "Obtendo todos os organizadores"});
   }
 
   static async updateOganizer(req, res) {
