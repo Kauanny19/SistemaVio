@@ -1,18 +1,16 @@
-const router = require('express').Router();
+const router = require('express').Router()
 
-const userController = require("../controllers/userController");
-const organizerController = require("../controllers/organizerController");
+const userController = require("../controllers/userController")
+const organizadorController = require("../controllers/organizadorController")
 
-//Rotas Usuário x
 router.post('/user', userController.createUser);
-// router.get('/user',userController.getAllUsers);
-// router.put('/user',userController.updateUser);
-// router.delete('/user/:cpf',userController.deleteUser);
+router.get('/user', userController.getAllUsers);
+router.put('/user', userController.updateUser);
+router.delete('/user/:id', userController.deleteUser);
 
-//Rotas Organizador
-router.post('/organizador', organizerController.createOrganizer);
-//router.get('/organizador', organizerController.getAllOrganizer);
-// router.put('/organizador', organizerController.updateOganizer);
-// router.delete('/organizador/:id', organizerController.deleteOrganizer);
+router.post('/organizador', organizadorController.createOrganizador);
+router.get('/organizador', organizadorController.getAllOrganizador);
+router.put('/organizador', organizadorController.updateOrganizador);
+router.delete('/organizador/:id', organizadorController.deleteOrganizador);
 
 module.exports = router

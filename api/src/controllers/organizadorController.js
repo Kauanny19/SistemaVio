@@ -1,25 +1,26 @@
 const connect = require("../db/connect");
+let nextId = 1;
 
-module.exports = class userController {
-  static async createUser(req, res) {
-    const { cpf, email, password, name } = req.body;
+module.exports = class organizadorController {
+  static async createOrganizador(req, res) {
+    const { telefone, email, senha, nome } = req.body;
 
-    if (!cpf || !email || !password || !name) {
+    if (!telefone || !email || !senha || !nome) {
       return res
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
-    } else if (isNaN(cpf) || cpf.length !== 11) {
+    } else if (isNaN(telefone) || telefone.length !== 11) {
       return res.status(400).json({
-        error: "CPF inválido. Deve conter exatamente 11 dígitos numéricos",
+        error: "Telefone inválido. Deve conter exatamente 11 dígitos numéricos",
       });
     } else if (!email.includes("@")) {
       return res.status(400).json({ error: "Email inválido. Deve conter @" });
     } else {
       // Construção da query INSERT
-      const query = `INSERT INTO usuario (cpf, password, email, name) VALUES('${cpf}', 
-      '${password}', 
+      const query = `INSERT INTO organizador (telefone, senha, email, nome) VALUES('${telefone}', 
+      '${senha}', 
       '${email}', 
-      '${name}')`;
+      '${nome}')`;
 
       // Executando a query  criada
       try {
@@ -48,9 +49,8 @@ module.exports = class userController {
       }
     }
   }
-
-  static async getAllUsers(req, res) {
-    const query = `SELECT * FROM usuario`;
+  static async getAllOrganizador(req, res) {
+    const query = `SELECT * FROM organizador`;
 
     try {
       connect.query(query, function (err, results) {
@@ -60,7 +60,7 @@ module.exports = class userController {
         }
         return res
           .status(200)
-          .json({ message: "Lista de Usuários", users: results });
+          .json({ message: "Lista de Organizador", organizadores: results });
       });
     } catch (error) {
       console.error("Erro ao executar consulta:", error);
@@ -68,18 +68,18 @@ module.exports = class userController {
     }
   }
 
-  static async updateUser(req, res) {
+  static async updateOrganizador(req, res) {
     //Desestrutura e recupera os dados enviados via corpo da requisição
-    const { cpf, email, password, name } = req.body;
+    const { id, telefone, email, senha, nome } = req.body;
 
-    //Validar se todos os campos foram peenchidos
-    if (!cpf || !email || !password || !name) {
+    //Validar se todos os campos foram preenchidos
+    if (!id || !telefone || !email || !senha || !nome) {
       return res
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
-    const query = `UPDATE usuario SET name=?,email=?,password=? WHERE cpf = ?`;
-    const values = [name, email, password, cpf];
+    const query = `UPDATE organizador SET nome=?,email=?,senha=?,telefone=? WHERE id_organizador = ?`;
+    const values = [nome, email, senha, telefone, id];
 
     try {
       connect.query(query, values, function (err, results) {
@@ -87,16 +87,16 @@ module.exports = class userController {
           if (err.code === "ER_DUP_ENTRY") {
             return res
               .status(400)
-              .json({ error: "Email já cadastrado por outro usuário" });
+              .json({ error: "Email já cadastrado por outro organizador" });
           } else {
             console.error(err);
             res.status(500).json({ error: "Erro interno do servidor" });
           }
         }
         if (results.affectedRows === 0) {
-          return res.status(404).json({ error: "Usuário não encontrado" });
+          return res.status(404).json({ error: "Organizador não encontrado" });
         }
-        return res.status(200).json({ message: "Usuário atualizado com sucesso" });
+        return res.status(200).json({ message: "Organizador atualizado com sucesso" });
       });
     } catch(error) {
       console.error("Erro ao executar consulta", error);
@@ -104,10 +104,10 @@ module.exports = class userController {
     }
   }
 
-  static async deleteUser(req, res) {
-    const id_usuario = req.params.id;
-    const query = `DELETE FROM usuario WHERE id_usuario = ?`;
-    const values = [id_usuario];
+  static async deleteOrganizador(req, res) {
+    const organizadorId = req.params.id;
+    const query = `DELETE FROM organizador WHERE id_organizador = ?`;
+    const values = [organizadorId];
 
     try{
       connect.query(query,values,function(err,results){
@@ -116,13 +116,14 @@ module.exports = class userController {
           return res.status(500).json({error:"Erro interno do servidor"});
         }
         if(results.affectedRows === 0){
-          return res.status(404).json({error:"Usuário não encontrado"});
+          return res.status(404).json({error:"Organizador não encontrado"});
         }
-        return res.status(200).json({message:"Usuário excluído com sucesso"});
+        return res.status(200).json({message:"Organizador excluído com sucesso"});
       });
+
     } catch(error){
       console.error(error);
-      return res.status(500).json({error:"Erro interno do servidor"});
+      return res.status(500).json({error:"Erro interno do servidor"})
     }
   }
 };
