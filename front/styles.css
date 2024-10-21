@@ -104,6 +104,16 @@ main section {
   flex: 1; /* Faz com que os itens se ajustem dinamicamente */
 }
 
+#user-list li {
+  background-color: #afd8de; /* Cor de fundo para destacar a seção 'home' */
+  padding: 10px; /* Espaçamento interno */
+  border-radius: 3px; /* Bordas arredondadas */
+  margin: 10px;
+  list-style-type: none;
+  width: 50%;
+  
+}
+
 /* Estilo do rodapé */
 footer {
   background-color: #333; /* Cor de fundo escura */
