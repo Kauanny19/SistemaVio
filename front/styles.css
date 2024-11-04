@@ -114,6 +114,32 @@ main section {
   
 }
 
+/*Tabela*/
+table {
+  width: 100%; /* Largura total da tabela */
+  border-collapse: collapse; /* Remove espaços entre bordas */
+  margin-top: 20px; /* Espaçamento superior */
+}
+
+th, td {
+  border: 1px solid #ddd; /* Borda cinza clara */
+  padding: 8px; /* Espaçamento interno */
+  text-align: left; /* Alinhamento à esquerda */
+}
+
+th {
+  background-color: #afd8de; /* Cor de fundo para cabeçalho */
+  color: white; /* Cor do texto no cabeçalho */
+}
+
+tr:nth-child(even) {
+  background-color: #c6e5ebb3; /* Cor de fundo para linhas pares */
+}
+
+tr:hover {
+  background-color: #ddd; /* Cor de fundo ao passar o mouse */
+}
+
 /* Estilo do rodapé */
 footer {
   background-color: #333; /* Cor de fundo escura */
@@ -124,3 +150,4 @@ footer {
   position: absolute; /* Posiciona o rodapé de forma absoluta */
   bottom: 0; /* Posiciona o rodapé na parte inferior da página */
 }
+

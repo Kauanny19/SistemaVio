@@ -60,16 +60,42 @@
           <!--Entrada do senha-->
           <label for="senha">Senha</label>
           <input type="password" id="senha" name="senha" required />
-          
+
           <!--Botão para enviar o formulário-->
           <input type="submit" value="Cadastrar" />
-
         </form>
       </section>
       <section>
         <!-- Lista para exibir os usuários cadastrados -->
-         <h2>Usuários Cadastrados</h2>
-         <ul id="user-list"></ul>
+        <h2>Usuários Cadastrados</h2>
+        <ul id="user-list"></ul>
+      </section>
+      <section>
+        <h2>Usuários Cadastrados via Tabela</h2>
+        <table id="user-table">
+          <thead>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>E-mail</th>
+          </thead>
+          <tbody id="user-list-tabela">
+            <!-- Os usuários serão adicionados aqui -->
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Organizadores Cadastrados via Tabela</h2>
+        <table id="organizador-table">
+          <thead>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>E-mail</th>
+          </thead>
+          <tbody id="organizador-list-tabela">
+            <!-- Os organizadores serão adicionados aqui -->
+          </tbody>
+        </table>
       </section>
     </main>
 
