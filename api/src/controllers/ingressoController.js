@@ -122,6 +122,6 @@ module.exports = class ingressoController {
     } catch (error) {
       console.log("Erro ao executar a consulta!", err);
       return res.status(500).json({ error: "Erro Interno do Servidor" });
-    }
+    }//Fim deleteIngresso
   }
 };
