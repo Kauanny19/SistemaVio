@@ -1,6 +1,7 @@
 const connect = require("../db/connect");
 
 module.exports = class userController {
+
   static async createUser(req, res) {
     const { cpf, email, password, name } = req.body;
 
@@ -21,7 +22,7 @@ module.exports = class userController {
       '${email}', 
       '${name}')`;
 
-      // Executando a query  criada
+      // Executando a query criada
       try {
         connect.query(query, function (err) {
           if (err) {
@@ -47,7 +48,7 @@ module.exports = class userController {
         res.status(500).json({ error: "Erro interno do servidor" });
       }
     }
-  }
+  }// Fim Create
 
   static async getAllUsers(req, res) {
     const query = `SELECT * FROM usuario`;
@@ -66,7 +67,7 @@ module.exports = class userController {
       console.error("Erro ao executar consulta:", error);
       return res.status(500).json({ error: "Erro inertno do Servidor" });
     }
-  }
+  } //Fim GET
 
   static async updateUser(req, res) {
     //Desestrutura e recupera os dados enviados via corpo da requisição
@@ -102,7 +103,7 @@ module.exports = class userController {
       console.error("Erro ao executar consulta", error);
       return res.status(500).json({error:"Error interno do servidor"});
     }
-  }
+  }// Fim Update
 
   static async deleteUser(req, res) {
     const id_usuario = req.params.id;
@@ -124,5 +125,5 @@ module.exports = class userController {
       console.error(error);
       return res.status(500).json({error:"Erro interno do servidor"});
     }
-  }
+  }//Fim Delete
 };
