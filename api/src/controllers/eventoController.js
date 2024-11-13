@@ -50,8 +50,7 @@ module.exports = class eventoController {
 
   // Update de um evento
   static async updateEvento(req, res) {
-    const { id_evento, nome, descricao, data_hora, local, fk_id_organizador } =
-      req.body;
+    const { id_evento, nome, descricao, data_hora, local, fk_id_organizador } = req.body;
 
     //Validação genérica de todos os atributos
     if (
@@ -108,6 +107,69 @@ module.exports = class eventoController {
     } catch (error) {
       console.log("Erro ao executar a consulta!", err);
       return res.status(500).json({ error: "Erro Interno do Servidor" });
+    }
+  }
+
+  static async getEventosPorData(req, res){
+    const query = `SELECT * FROM evento`;
+
+    try{
+      connect.query(query,(err, results) => {
+        if(err){
+          console.error(err);
+          return res.status(500).json({error: "Erro ao buscar eventos"});
+        }
+        const dataEvento = new Date(results[0].data_hora);
+        const dia = dataEvento.getDate();
+        const mes = dataEvento.getMonth()+1;
+        const ano = dataEvento.getFullYear();
+        console.log(dia+'/'+mes+'/'+ano);
+        
+        const now = new Date();
+        const eventosPassados = results.filter(evento => new Date(evento.data_hora)<now);
+        const eventosFuturos = results.filter(evento => new Date(evento.data_hora)>=now);
+
+        const diferencaMs = eventosFuturos[0].data_hora.getTime() - now.getTime();
+        const dias = Math.floor(diferencaMs/(1000*60*60*24));
+        const horas = Math.floor(diferencaMs%(1000*60*60*24)/(1000*60*60));
+        console.log(diferencaMs, 'Falta: '+dias+'dias, '+horas+'horas');
+
+        //Comparando datas
+        const dataFiltro = new Date('2024-12-15').toISOString().split("T");
+        const eventoDia = results.filter(evento => new Date(evento.data_hora).toISOString().split("T")[0] === dataFiltro[0]);
+        console.log("Data filtro: ", dataFiltro);
+        console.log("Eventos: ",eventoDia)
+      
+        return res.status(200).json({message: "Ok", eventosPassados, eventosFuturos})
+      });
+    }catch(error){
+      console.error(error);
+      return res.status(500).json({error: "Erro ao buscar eventos"});
+    }
+  }
+
+  static async getEventosDias(req, res){
+    const data = req.params.data_hora;
+    const query = `SELECT * FROM evento WHERE data_hora =? BETWEEN ? and ?`;
+
+    try{
+      connect.query(query, data, (err, results) => {
+        if(err){
+          console.error(err);
+          return res.status(500).json({error: "Erro ao buscar eventos"});
+        }
+
+        //Comparando datas
+        const dataFiltro = new Date(data).toISOString().split("T")[0];
+        const eventoDia = results.filter(evento => new Date(evento.data_hora).toISOString().split("T")[0] === dataFiltro[0]);
+        console.log("Data filtro: ", dataFiltro);
+        console.log("Eventos: ",eventoDia)
+      
+        return res.status(200).json({message: "Ok"});
+      });
+    }catch(error){
+      console.error(error);
+      return res.status(500).json({error: "Erro ao buscar eventos"});
     }
   }
 };
