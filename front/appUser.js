@@ -156,7 +156,7 @@ function getAllOrganizadoresTable() {
         return response.json();
       }
       return response.json().then((err) => {
-        throw new Error(err.error);
+         throw new Error(err.error);
       });
     })
     .then((data) => {

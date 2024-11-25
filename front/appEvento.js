@@ -12,6 +12,6 @@ function testeCalendario(event) {
     //console.log("Data recebida", data_recebida);
     alert("A data selecionada é:" + data_recebida);
   } else {
-    alert("Por favor, selecione uma data!");
+     alert("Por favor, selecione uma data!");
   }
 }
