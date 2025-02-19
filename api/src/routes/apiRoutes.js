@@ -7,6 +7,7 @@ const ingressoController = require("../controllers/ingressoController");
 
 //Rotas Usuário
 router.post('/user', userController.createUser);
+router.post("/login", userController.loginUser);
 router.get('/user', userController.getAllUsers);
 router.put('/user', userController.updateUser);
 router.delete('/user/:id', userController.deleteUser);
