@@ -1,11 +1,10 @@
 const connect = require("../db/connect");
 
 module.exports = class userController {
-
   static async createUser(req, res) {
-    const { cpf, email, password, name } = req.body;
+    const { cpf, email, password, name, data_nascimento } = req.body;
 
-    if (!cpf || !email || !password || !name) {
+    if (!cpf || !email || !password || !name || !data_nascimento) {
       return res
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
@@ -17,12 +16,14 @@ module.exports = class userController {
       return res.status(400).json({ error: "Email inválido. Deve conter @" });
     } else {
       // Construção da query INSERT
-      const query = `INSERT INTO usuario (cpf, password, email, name) VALUES('${cpf}', 
-      '${password}', 
+      const query = `INSERT INTO usuario (name, cpf, data_nascimento, email, password ) VALUES('${name}',
+      '${cpf}', 
+      '${data_nascimento}',
       '${email}', 
-      '${name}')`;
+      '${password}'
+      )`;
 
-      // Executando a query criada
+      // Executando a query  criada
       try {
         connect.query(query, function (err) {
           if (err) {
@@ -48,7 +49,7 @@ module.exports = class userController {
         res.status(500).json({ error: "Erro interno do servidor" });
       }
     }
-  }// Fim Create
+  }
 
   static async getAllUsers(req, res) {
     const query = `SELECT * FROM usuario`;
@@ -67,20 +68,20 @@ module.exports = class userController {
       console.error("Erro ao executar consulta:", error);
       return res.status(500).json({ error: "Erro inertno do Servidor" });
     }
-  } //Fim GET
+  }
 
   static async updateUser(req, res) {
     //Desestrutura e recupera os dados enviados via corpo da requisição
-    const { cpf, email, password, name } = req.body;
+    const { id, cpf, email, password, name, data_nascimento } = req.body;
 
     //Validar se todos os campos foram peenchidos
-    if (!cpf || !email || !password || !name) {
+    if (!id || !cpf || !email || !password || !name || !data_nascimento) {
       return res
         .status(400)
         .json({ error: "Todos os campos devem ser preenchidos" });
     }
-    const query = `UPDATE usuario SET name=?,email=?,password=? WHERE cpf = ?`;
-    const values = [name, email, password, cpf];
+    const query = `UPDATE usuario SET name=?,email=?,password=?,cpf=? WHERE id_usuario = ?`;
+    const values = [name, email, password, cpf, data_nascimento, id];
 
     try {
       connect.query(query, values, function (err, results) {
@@ -88,45 +89,49 @@ module.exports = class userController {
           if (err.code === "ER_DUP_ENTRY") {
             return res
               .status(400)
-              .json({ error: "Email já cadastrado por outro usuário" });
+              .json({ error: "Email já cadastrado por outro usuario" });
           } else {
             console.error(err);
-            res.status(500).json({ error: "Erro interno do servidor" });
+            return res.status(500).json({ error: "Erro interno do servidor" });
           }
         }
         if (results.affectedRows === 0) {
           return res.status(404).json({ error: "Usuário não encontrado" });
         }
-        return res.status(200).json({ message: "Usuário atualizado com sucesso" });
+        return res
+          .status(200)
+          .json({ message: "Usuário atualizado com sucesso" });
       });
-    } catch(error) {
+    } catch (error) {
       console.error("Erro ao executar consulta", error);
-      return res.status(500).json({error:"Error interno do servidor"});
+      return res.status(500).json({ error: "Erro interno no servidor" });
     }
-  }// Fim Update
+  }
 
   static async deleteUser(req, res) {
-    const id_usuario = req.params.id;
+    const usuarioId = req.params.id;
     const query = `DELETE FROM usuario WHERE id_usuario = ?`;
-    const values = [id_usuario];
+    const values = [usuarioId];
 
-    try{
-      connect.query(query,values,function(err,results){
-        if(err){
+    try {
+      connect.query(query, values, function (err, results) {
+        if (err) {
           console.error(err);
-          return res.status(500).json({error:"Erro interno do servidor"});
+          return res.status(500).json({ error: "Erro interno do servidor" });
         }
-        if(results.affectedRows === 0){
-          return res.status(404).json({error:"Usuário não encontrado"});
+        if (results.affectedRows === 0) {
+          return res.status(404).json({ error: "Usuário não encontrado" });
         }
-        return res.status(200).json({message:"Usuário excluído com sucesso"});
+        return res
+          .status(200)
+          .json({ message: "Usuário excluído com sucesso" });
       });
-    } catch(error){
+    } catch (error) {
       console.error(error);
-      return res.status(500).json({error:"Erro interno do servidor"});
+      return res.status(500).json({ error: "Erro interno no servidor" });
     }
-  }//Fim Delete
-
+  }
+  //Medoto de Login - implementar
   static async loginUser(req, res) {
     const {email, password} = req.body
 
